@@ -1,31 +1,40 @@
-#!/usr/bin/python3
-"""FIFOCache Module"""
-
+#!/usr/bin/env python3
+""" BaseCaching module
+"""
 from base_caching import BaseCaching
 
 
 class FIFOCache(BaseCaching):
-    """FIFOCache Class"""
+    """
+    FIFOCache defines a FIFO caching system
+    """
 
-    def __int__(self):
-        """The init method of FIFOCache Class"""
+    def __init__(self):
+        """
+        Initialize the class with the parent's init method
+        """
         super().__init__()
+        self.last_in = []
 
     def put(self, key, item):
-        """Cache a key-value pair"""
-        if key and item:
-            if len(self.cache_data) == self.MAX_ITEMS \
-                    and key not in self.cache_data.keys():
-                first_item_key = list(self.cache_data.keys())[0]
-                self.cache_data.pop(first_item_key)
-                print(f"Discard: {first_item_key}")
-
-            self.cache_data.update({key: item})
+        """
+        Cache a key-value pair
+        """
+        if key is None or item is None:
+            pass
+        else:
+            length = len(self.cache_data)
+            if length >= BaseCaching.MAX_ITEMS and key not in self.cache_data:
+                print("DISCARD: {}".format(self.last_in[0]))
+                del self.cache_data[self.last_in[0]]
+                del self.last_in[0]
+            self.last_in.append(key)
+            self.cache_data[key] = item
 
     def get(self, key):
-        """The get method of FIFOCache Class"""
-        if key:
-            if key in self.cache_data:
-                return self.cache_data.get(key)
-            return None
+        """
+        Return the value linked to a given key, or None
+        """
+        if key is not None and key in self.cache_data.keys():
+            return self.cache_data[key]
         return None
